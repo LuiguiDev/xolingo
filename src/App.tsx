@@ -1,173 +1,226 @@
-/*
-Archivo: Xolingo — Starter (un solo archivo para preview)
-Incluye:
-  - tailwind.config.js (snippet)
-  - src/index.css (snippet con variables CSS)
-  - Tipos TS, datos de ejemplo y componentes React funcionales
+import React, { useState } from 'react';
 
-Instrucciones rápidas:
-  - Copie las secciones de tailwind.config.js e index.css a sus archivos reales.
-  - Este componente espera que Tailwind esté instalado y configurado.
-*/
-
-// tailwind.config.js (snippet) -------------------------------------------
-// module.exports = {
-//   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-//   theme: {
-//     extend: {
-//       colors: {
-//         primary: 'var(--color-primary)',
-//         accent: 'var(--color-accent)',
-//         bg: 'var(--color-bg)',
-//         surface: 'var(--color-surface)',
-//         text: 'var(--color-text)'
-//       }
-//     }
-//   },
-//   plugins: []
-//}
-
-// src/index.css (snippet) ------------------------------------------------
-// :root {
-//   --color-primary: #0f766e; /* verde-oscuro */
-//   --color-accent: #eab308;  /* amarillo */
-//   --color-bg: #f8fafc;      /* fondo */
-//   --color-surface: #ffffff; /* tarjetas */
-//   --color-text: #0f172a;    /* texto */
-// }
-// @tailwind base;
-// @tailwind components;
-// @tailwind utilities;
-
-// -----------------------------------------------------------------------
-// Código React + TypeScript
-import React from 'react'
-
-// Tipos ---------------------------------------------------------------
-type Word = {
-  id: string
-  nahuatl: string
-  spanish: string
-  gloss: string
-  etymology: string
-  story: string
-  endemic: boolean
-  image?: string // url
-}
-
-// Datos de ejemplo (mínimo) -------------------------------------------
-const EXAMPLE_WORDS: Word[] = [
-  {
-    id: '1',
-    nahuatl: 'chapulín',
-    spanish: 'chapulín',
-    gloss: 'Saltamontes comestible, frecuentemente asado o frito',
-    etymology: "Del náhuatl 'chapolin' (saltarín).",
-    story:
-      'En poblaciones rurales, el chapulín aparece en mercados y festividades. Saber su nombre en náhuatl conecta su consumo con prácticas locales y temporadas de lluvia.',
-    endemic: true,
-    image: ''
-  },
-  {
-    id: '2',
-    nahuatl: 'xoloitzcuintli',
-    spanish: 'xoloitzcuintle',
-    gloss: 'Perro nativo de México, asociado a mitos y al inframundo',
-    etymology: "Del náhuatl 'xōlōitzcuintli' — xōlōtl (dios o chamuco), itzcuintli (perro)",
-    story:
-      'Los xolo eran compañeros en el mundo prehispánico; conocer la palabra permite reconocer referencias a lugares y artesanías que usan su imagen.',
-    endemic: true,
-    image: ''
-  }
-]
-
-// Componentes --------------------------------------------------------
-function Badge({ children }: { children: React.ReactNode }) {
+// Componente para palabras compuestas
+const WordBreakdown = ({ animal, onBack, onStoryClick }) => {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-accent/10 text-accent">
-      {children}
-    </span>
-  )
-}
-
-function WordCard({ w }: { w: Word }) {
-  return (
-    <article className="bg-surface p-4 rounded-2xl shadow-sm border border-gray-100">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-2xl font-bold text-text">{w.nahuatl}</h3>
-          <p className="text-sm text-gray-600">{w.spanish} • {w.gloss}</p>
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 p-4">
+      <div className="max-w-sm mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <button 
+            onClick={onBack}
+            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+          >
+            ⬅️
+          </button>
+          <h1 className="text-xl font-bold text-gray-800">XOLINGO</h1>
+          <div className="w-9"></div>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          {w.endemic ? <Badge>Endémico</Badge> : <Badge>Prestado</Badge>}
-          <small className="text-xs text-gray-400">ID: {w.id}</small>
+
+        {/* Imagen del animal */}
+        <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg">
+          <div className="w-full h-48 bg-gray-200 rounded-xl flex items-center justify-center mb-4">
+            <span className="text-4xl">{animal.emoji}</span>
+          </div>
         </div>
-      </header>
 
-      <section className="mt-3 text-sm text-gray-700">
-        <strong className="block text-xs text-gray-500">Etimología</strong>
-        <p className="mt-1">{w.etymology}</p>
-      </section>
+        {/* Palabra principal */}
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">{animal.nahuatl}</h2>
+          <p className="text-lg text-gray-600">{animal.spanish}</p>
+        </div>
 
-      <section className="mt-3 text-sm text-gray-700">
-        <strong className="block text-xs text-gray-500">Narrativa</strong>
-        <p className="mt-1">{w.story}</p>
-      </section>
-
-      <footer className="mt-4 flex items-center justify-between text-xs text-gray-500">
-        <span>Origen: náhuatl</span>
-        <button className="px-3 py-1 rounded-full border text-sm border-gray-200 hover:bg-gray-50">Ver más</button>
-      </footer>
-    </article>
-  )
-}
-
-function StoryList({ words }: { words: Word[] }) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {words.map((w) => (
-        <WordCard key={w.id} w={w} />
-      ))}
-    </div>
-  )
-}
-
-// Esquema mínimo para APIs / DB --------------------------------------
-/*
-Word collection schema (JSON):
-{
-  id: string,
-  nahuatl: string,
-  spanish: string,
-  gloss: string,
-  etymology: string,
-  story: string,       // narrativa breve pensada para evocar imagenes / lugares
-  endemic: boolean,   // marca contenido relevante a fauna/flora mexicana
-  audioUrl?: string,   // pronunciación (opcional)
-  imageUrl?: string,
-  tags?: string[]      // p.ej. ['animales', 'lugares', 'comida']
-}
-*/
-
-// App principal ------------------------------------------------------
-export default function App() {
-  return (
-    <main className="min-h-screen bg-bg text-text p-6">
-      <div className="max-w-5xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-3xl font-extrabold">Xolingo</h1>
-          <p className="text-sm text-gray-600 mt-1">Vocabulario español con raíz náhuatl — aprendizaje narrativo.</p>
-        </header>
-
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Historias y palabras</h2>
-          <StoryList words={EXAMPLE_WORDS} />
-        </section>
-
-        <aside className="mt-8 text-xs text-gray-500">
-          <strong>Nota técnica:</strong> use variables CSS en :root como se muestra arriba para ajustar paleta fácilmente.
-        </aside>
+        {/* Desglose de la palabra */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Desglose:</h3>
+          <div className="space-y-4">
+            {animal.breakdown.map((part, index) => (
+              <div key={index} className="border-l-4 border-orange-400 pl-4">
+                <button
+                  onClick={() => onStoryClick(part.word)}
+                  className="text-xl font-semibold text-orange-600 hover:text-orange-700 transition-colors block"
+                >
+                  {part.word}
+                </button>
+                <p className="text-gray-600">{part.meaning}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <p className="text-sm text-gray-500 mb-2">Traducción literal:</p>
+            <p className="text-lg font-medium text-gray-800 italic">"{animal.literalTranslation}"</p>
+          </div>
+        </div>
       </div>
-    </main>
-  )
-}
+    </div>
+  );
+};
+
+// Componente para historias de palabras únicas
+const Story = ({ word, story, onBack }) => {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-indigo-100 p-4">
+      <div className="max-w-sm mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <button 
+            onClick={onBack}
+            className="p-2 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+          >
+            ⬅️
+          </button>
+          <h1 className="text-xl font-bold text-gray-800">XOLINGO</h1>
+          <div className="w-9"></div>
+        </div>
+
+        {/* Palabra principal */}
+        <div className="text-center mb-8">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">{word}</h2>
+        </div>
+
+        {/* Historia */}
+        <div className="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <span className="mr-2">📚</span>
+            Historia de la palabra
+          </h3>
+          <div className="prose prose-sm text-gray-700 leading-relaxed">
+            {story.split('\n').map((paragraph, index) => (
+              <p key={index} className="mb-4 last:mb-0">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente principal de lista
+const AnimalList = ({ onAnimalSelect }) => {
+  const animals = [
+    {
+      id: 'guajolote',
+      emoji: '🦃',
+      spanish: 'Guajolote',
+      nahuatl: 'Huexolotl',
+      breakdown: [
+        { word: 'Huehue', meaning: 'Viejo' },
+        { word: 'Xolotl', meaning: 'Monstruo' }
+      ],
+      literalTranslation: 'Viejo Monstruo'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-100 p-4">
+      <div className="max-w-sm mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">XOLINGO</h1>
+          <p className="text-gray-600">Explora palabras en náhuatl</p>
+        </div>
+
+        {/* Lista de animales */}
+        <div className="space-y-4">
+          {animals.map((animal) => (
+            <button
+              key={animal.id}
+              onClick={() => onAnimalSelect(animal)}
+              className="w-full bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="text-4xl">{animal.emoji}</div>
+                <div className="flex-1 text-left">
+                  <h3 className="text-xl font-bold text-gray-800">{animal.nahuatl}</h3>
+                  <p className="text-gray-600">{animal.spanish}</p>
+                </div>
+                <div className="text-orange-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 text-center">
+          <p className="text-sm text-gray-500">
+            Descubre la riqueza del náhuatl 🌺
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente principal de la aplicación
+const XolingoApp = () => {
+  const [currentView, setCurrentView] = useState('list');
+  const [selectedAnimal, setSelectedAnimal] = useState(null);
+  const [selectedWord, setSelectedWord] = useState(null);
+
+  // Historias para palabras únicas
+  const stories = {
+    'Xolotl': `Xólotl era el dios azteca de la muerte y del inframundo, hermano gemelo de Quetzalcóatl. 
+
+Se le representaba como un perro sin pelo, el xoloitzcuintli, que guiaba las almas de los muertos en su viaje al Mictlán.
+
+La palabra "xólotl" también significa "monstruo" o "cosa extraña", refiriéndose a su aspecto único y su conexión con el mundo de los muertos.`,
+    'Huehue': `"Huehue" significa "viejo" o "anciano" en náhuatl, pero también conlleva un sentido de respeto y sabiduría.
+
+Los "huehues" eran los ancianos respetados de la comunidad, guardianes de la tradición y el conocimiento ancestral.
+
+Esta palabra se usa para denotar no solo la edad, sino la veneración hacia aquellos que han acumulado experiencia y sabiduría a lo largo de los años.`
+  };
+
+  const handleAnimalSelect = (animal) => {
+    setSelectedAnimal(animal);
+    setCurrentView('breakdown');
+  };
+
+  const handleStoryClick = (word) => {
+    setSelectedWord(word);
+    setCurrentView('story');
+  };
+
+  const handleBack = () => {
+    if (currentView === 'story') {
+      setCurrentView('breakdown');
+      setSelectedWord(null);
+    } else {
+      setCurrentView('list');
+      setSelectedAnimal(null);
+    }
+  };
+
+  return (
+    <div className="font-sans">
+      {currentView === 'list' && (
+        <AnimalList onAnimalSelect={handleAnimalSelect} />
+      )}
+      
+      {currentView === 'breakdown' && selectedAnimal && (
+        <WordBreakdown 
+          animal={selectedAnimal}
+          onBack={handleBack}
+          onStoryClick={handleStoryClick}
+        />
+      )}
+      
+      {currentView === 'story' && selectedWord && (
+        <Story 
+          word={selectedWord}
+          story={stories[selectedWord]}
+          onBack={handleBack}
+        />
+      )}
+    </div>
+  );
+};
+
+export default XolingoApp;

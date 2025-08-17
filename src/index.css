@@ -15,10 +15,10 @@
   -moz-osx-font-smoothing: grayscale;
 
   --color-primary: #0f766e; /* verde-oscuro */
-   --color-accent: #eab308;  /* amarillo */
-   --color-bg: #f8fafc;      /* fondo */
-   --color-surface: #ffffff; /* tarjetas */
-   --color-text: #0f172a;    /* texto */
+  --color-accent: #eab308;  /* amarillo */
+  --color-bg: #f8fafc;      /* fondo */
+  --color-surface: #ffffff; /* tarjetas */
+  --color-text: #0f172a;    /* texto */
 }
 
 a {
